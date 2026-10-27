@@ -1,12 +1,28 @@
 import { redirect } from 'next/navigation';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { apiFetch } from '@/lib/api';
 import type { Me } from '@/lib/types';
 import { NavLink } from '@/components/NavLink';
 import { logoutAction } from './actions';
 
 // Everything inside (admin)/ is protected: no valid ADMIN session, no page.
-export default async function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({ children }: { children: ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="shell">
+          <main className="main">
+            <p className="muted">Loading admin...</p>
+          </main>
+        </div>
+      }
+    >
+      <AdminContent>{children}</AdminContent>
+    </Suspense>
+  );
+}
+
+async function AdminContent({ children }: { children: ReactNode }) {
   const me = await apiFetch<Me>('/users/me');
   if (me.role !== 'ADMIN') redirect('/login?error=forbidden');
 

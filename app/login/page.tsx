@@ -1,6 +1,19 @@
+import { Suspense } from 'react';
 import { LoginForm } from './LoginForm';
 
-export default async function LoginPage({
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  return (
+    <Suspense fallback={<div className="login-wrap"><div className="card login-card"><p className="muted">Loading...</p></div></div>}>
+      <LoginContent searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function LoginContent({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;

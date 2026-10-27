@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { apiFetch } from '@/lib/api';
 import { formatDate, formatPkr, qs } from '@/lib/format';
 import { COMMITTEE_STATUSES, type AdminCommittee, type CommitteeStatus, type Paged } from '@/lib/types';
@@ -7,7 +8,19 @@ import { StatusBadge } from '@/components/StatusBadge';
 
 const LIMIT = 20;
 
-export default async function CommitteesPage({
+export default function CommitteesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; q?: string; status?: string }>;
+}) {
+  return (
+    <Suspense fallback={<p className="muted">Loading committees...</p>}>
+      <CommitteeList searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function CommitteeList({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string; q?: string; status?: string }>;

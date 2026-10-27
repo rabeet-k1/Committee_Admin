@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { apiFetch } from '@/lib/api';
 import { formatDate, qs } from '@/lib/format';
 import type { AdminUser, Paged } from '@/lib/types';
@@ -6,7 +7,19 @@ import { StatusBadge } from '@/components/StatusBadge';
 
 const LIMIT = 20;
 
-export default async function UsersPage({
+export default function UsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; q?: string }>;
+}) {
+  return (
+    <Suspense fallback={<p className="muted">Loading users...</p>}>
+      <UserList searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function UserList({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string; q?: string }>;

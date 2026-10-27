@@ -1,10 +1,19 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { apiFetch } from '@/lib/api';
 import { formatDate, formatPkr } from '@/lib/format';
 import type { CommitteeDetail } from '@/lib/types';
 import { StatusBadge } from '@/components/StatusBadge';
 
-export default async function CommitteeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function CommitteeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense fallback={<p className="muted">Loading committee...</p>}>
+      <CommitteeDetails params={params} />
+    </Suspense>
+  );
+}
+
+async function CommitteeDetails({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const c = await apiFetch<CommitteeDetail>(`/admin/committees/${id}`);
 
